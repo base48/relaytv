@@ -1,0 +1,111 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv/
+venv/
+ENV/
+env/
+
+# Packaging / build
+build/
+sidecar/build/
+bin/relaytv-shell-sidecar
+dist/
+*.egg-info/
+.eggs/
+
+# Test / coverage
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+
+# =========================
+# Logs & runtime
+# =========================
+#*.log
+#logs/
+tmp/
+temp/
+*.pid
+
+# mpv / media temp
+cache/
+downloads/
+recordings/
+
+# =========================
+# OS / editor junk
+# =========================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# VSCode / IDE
+.vscode/
+.idea/
+
+# =========================
+# Docker
+# =========================
+docker-compose.override.yml
+*.tar
+*.img
+
+# =========================
+# Environment / secrets
+# =========================
+.env
+.env.*
+secrets/
+*.key
+*.pem
+
+# =========================
+# Home Assistant / local data
+# =========================
+config/
+data/
+*.db
+*.sqlite3
+
+# =========================
+# AI / docs (optional)
+# =========================
+docs/AI_AGENT_GUIDELINES.md
+
+# =========================
+# Misc
+# =========================
+*.zip
+*.bak
+*.old
+VERSION
+build-release.sh
+deep_test.sh
+
+# =========================
+# Jellyfin plugin build outputs
+# =========================
+jellyfin-plugin/artifacts/
+jellyfin-plugin/src/**/bin/
+jellyfin-plugin/src/**/obj/
+#*.png
+
+# =========================
+# Scripts
+# =========================
+# Keep repo scripts/docs tracked; ignore only ad-hoc local script drops.
+scratch/
+local-scripts/
+.venv-ci/
+logs/
+ytmpv-pipeline-check-*.log

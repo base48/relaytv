@@ -1,0 +1,103 @@
+services:
+  relaytv:
+    user: "${PUID:-1000}:${PGID:-1000}"
+    image: "${RELAYTV_IMAGE_REF:-ghcr.io/mcgeezy/relaytv:latest}"
+    pull_policy: "${RELAYTV_PULL_POLICY:-missing}"
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      args:
+        RELAYTV_INSTALL_QT: ${RELAYTV_INSTALL_QT:-1}
+        RELAYTV_INSTALL_X11_OVERLAY: ${RELAYTV_INSTALL_X11_OVERLAY:-0}
+        RELAYTV_INSTALL_HEADLESS: ${RELAYTV_INSTALL_HEADLESS:-0}
+        RELAYTV_INSTALL_NODE: ${RELAYTV_INSTALL_NODE:-1}
+        RELAYTV_INSTALL_IDLE_BROWSER: ${RELAYTV_INSTALL_IDLE_BROWSER:-0}
+        RELAYTV_INSTALL_OPS_TOOLS: ${RELAYTV_INSTALL_OPS_TOOLS:-0}
+    container_name: relaytv
+    network_mode: host
+    shm_size: "512m"
+
+    restart: unless-stopped
+    env_file:
+      - .env
+
+    environment:
+      # Optional display/session passthrough (leave unset for headless runtime).
+      - QT_X11_NO_MITSHM=1
+      - DISPLAY=${DISPLAY-}
+      - XDG_SESSION_TYPE=${XDG_SESSION_TYPE-}
+      - RELAYTV_HOST_SESSION_TYPE=${RELAYTV_HOST_SESSION_TYPE-${XDG_SESSION_TYPE-}}
+      - RELAYTV_MODE=${RELAYTV_MODE:-}
+      - XAUTHORITY=/tmp/.Xauthority
+      - XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/${PUID:-1000}}
+      - WAYLAND_DISPLAY=${WAYLAND_DISPLAY-}
+      - QT_QPA_PLATFORM=${QT_QPA_PLATFORM-}
+
+      # Qt runtime controls (Wayland/X11 parity)
+      - RELAYTV_PLAYER_BACKEND=${RELAYTV_PLAYER_BACKEND:-qt}
+      - RELAYTV_QT_RUNTIME_MODE=${RELAYTV_QT_RUNTIME_MODE:-auto}
+      - RELAYTV_QT_EXTERNAL_MPV_ARGS=${RELAYTV_QT_EXTERNAL_MPV_ARGS:-}
+      - RELAYTV_QT_EXTERNAL_RENDERER_ORDER=${RELAYTV_QT_EXTERNAL_RENDERER_ORDER:-wayland,x11egl}
+      - RELAYTV_QT_EXTERNAL_HEALTH_TIMEOUT_SEC=${RELAYTV_QT_EXTERNAL_HEALTH_TIMEOUT_SEC:-2.0}
+      - RELAYTV_QT_EXTERNAL_HEALTH_GRACE_SEC=${RELAYTV_QT_EXTERNAL_HEALTH_GRACE_SEC:-1.5}
+      - RELAYTV_QT_OVERLAY_ENABLED=${RELAYTV_QT_OVERLAY_ENABLED:-}
+      - RELAYTV_QT_CURSOR_AUTOHIDE=${RELAYTV_QT_CURSOR_AUTOHIDE:-}
+      - RELAYTV_QT_CURSOR_AUTOHIDE_MS=${RELAYTV_QT_CURSOR_AUTOHIDE_MS:-}
+      - RELAYTV_QT_CURSOR_AUTOHIDE_SEC=${RELAYTV_QT_CURSOR_AUTOHIDE_SEC:-}
+      - RELAYTV_QT_CURSOR_DEBUG=${RELAYTV_QT_CURSOR_DEBUG:-0}
+      - RELAYTV_HEADLESS_REMOTE_ENABLED=${RELAYTV_HEADLESS_REMOTE_ENABLED:-0}
+      - RELAYTV_HEADLESS_REMOTE_DISPLAY=${RELAYTV_HEADLESS_REMOTE_DISPLAY:-:99}
+      - RELAYTV_HEADLESS_REMOTE_RESOLUTION=${RELAYTV_HEADLESS_REMOTE_RESOLUTION:-1920x1080x24}
+      - RELAYTV_HEADLESS_REMOTE_SOFTWARE=${RELAYTV_HEADLESS_REMOTE_SOFTWARE:-1}
+      - RELAYTV_HEADLESS_VNC_ENABLED=${RELAYTV_HEADLESS_VNC_ENABLED:-1}
+      - RELAYTV_HEADLESS_VNC_LISTEN=${RELAYTV_HEADLESS_VNC_LISTEN:-127.0.0.1}
+      - RELAYTV_HEADLESS_VNC_PORT=${RELAYTV_HEADLESS_VNC_PORT:-5900}
+      - RELAYTV_HEADLESS_VNC_PASSWORD_FILE=${RELAYTV_HEADLESS_VNC_PASSWORD_FILE:-}
+      - RELAYTV_YTDLP_AUTO_UPDATE=${RELAYTV_YTDLP_AUTO_UPDATE:-0}
+      - RELAYTV_YTDLP_AUTO_UPDATE_INTERVAL_HOURS=${RELAYTV_YTDLP_AUTO_UPDATE_INTERVAL_HOURS:-24}
+      - RELAYTV_YTDLP_AUTO_UPDATE_TIMEOUT_SEC=${RELAYTV_YTDLP_AUTO_UPDATE_TIMEOUT_SEC:-180}
+      - RELAYTV_YTDLP_AUTO_UPDATE_STATE_FILE=${RELAYTV_YTDLP_AUTO_UPDATE_STATE_FILE:-/data/.relaytv-ytdlp-update.json}
+
+      - RELAYTV_DEBUG=${RELAYTV_DEBUG:-0}
+      - MPV_DEBUG=${MPV_DEBUG:-0}
+      - MPV_LOG_FILE=${MPV_LOG_FILE:-/tmp/mpv.log}
+
+      - HOME=/tmp
+      - XDG_CACHE_HOME=/tmp/.cache
+      - XDG_CONFIG_HOME=/tmp/.config
+
+      - RELAYTV_JELLYFIN_ENABLED=${RELAYTV_JELLYFIN_ENABLED:-0}
+      - RELAYTV_JELLYFIN_SERVER_URL=${RELAYTV_JELLYFIN_SERVER_URL:-}
+      - RELAYTV_JELLYFIN_API_KEY=${RELAYTV_JELLYFIN_API_KEY:-}
+
+    tmpfs:
+      - /tmp
+
+    volumes:
+      - ./data:/data
+      - ./bin:/opt/relaytv/bin:rw
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /sys:/sys:ro
+      - /run/udev:/run/udev:ro
+      # Needed only when running with a host X11 display.
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ${RELAYTV_XAUTHORITY_HOST_PATH:-/dev/null}:/tmp/.Xauthority:ro
+      - /run/user/${PUID:-1000}:/run/user/${PUID:-1000}:rw
+
+    working_dir: /app
+
+    devices:
+      - /dev/snd:/dev/snd
+      - /dev/dri:/dev/dri
+
+    group_add:
+      - audio
+      - video
+      - "${RELAYTV_RENDER_GID:-992}"
+
+    security_opt:
+      - apparmor:unconfined
+
+    tty: true
+    stdin_open: true
