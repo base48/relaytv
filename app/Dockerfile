@@ -111,6 +111,11 @@ WORKDIR /app
 COPY app/relaytv_app /app/relaytv_app
 COPY LICENSE COPYING THIRD_PARTY_LICENSES.md ASSETS.md /usr/share/doc/relaytv/
 
+# Source files can be checked out with restrictive umask-derived modes on some
+# hosts. The container runs as the Compose UID, so normalize read/execute bits
+# after COPY instead of depending on source checkout permissions.
+RUN chmod -R a+rX /app/relaytv_app /usr/share/doc/relaytv
+
 # If weather/static assets are staged in relaytv_app/static/weather, copy them into
 # the PWA path so they are served from /pwa/weather/*.
 RUN set -eux; \

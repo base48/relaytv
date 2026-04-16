@@ -40,6 +40,15 @@ def test_ui_smoke() -> None:
     assert 'id="jellyfinShell"' in response.text
     assert 'id="jfSearchInput"' in response.text
     assert 'id="nowLangBtn"' in response.text
+    assert 'id="aboutBtn"' in response.text
+    assert 'id="aboutBackdrop"' in response.text
+    assert 'id="aboutGithubLink"' in response.text
+    assert 'https://github.com/mcgeezy/relaytv' in response.text
+    assert 'id="aboutSupportLink"' in response.text
+    assert 'https://buymeacoffee.com/relaytv' in response.text
+    assert 'img.buymeacoffee.com/button-api' in response.text
+    assert 'function openAbout' in response.text
+    assert 'bindAboutUi();' in response.text
     assert 'class="nowSubRow"' in response.text
     assert 'id="langBackdrop"' in response.text
     assert 'role="tablist"' in response.text
@@ -80,6 +89,8 @@ def test_ui_smoke() -> None:
     assert "await post('/play_now', {url, preserve_current:true, preserve_to:'queue_front', resume_current:true, reason:'add_menu'});" in response.text
     assert "play.disabled = !available;" in response.text
     assert "queue.disabled = !available;" in response.text
+    assert 'id="setAboutGithubLink"' not in response.text
+    assert 'id="setAboutSupportLink"' not in response.text
 
 
 def test_health_endpoint() -> None:

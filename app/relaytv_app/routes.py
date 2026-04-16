@@ -9188,6 +9188,41 @@ def ui():
 .weatherLocRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .weatherLocRow .input{flex:1 1 260px}
 .weatherLocMeta{font-size:12px;opacity:.82;margin-top:6px;min-height:16px}
+.aboutLinks{display:grid;gap:12px;margin-top:10px}
+.aboutLink{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  color:var(--text);
+  text-decoration:none;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.06);
+}
+.aboutLink:hover{
+  border-color:rgba(56,189,248,.62);
+  background:rgba(56,189,248,.12);
+}
+.aboutLink small{
+  display:block;
+  margin-top:3px;
+  color:var(--muted2);
+  font-size:12px;
+  line-height:1.35;
+}
+.aboutSupportImg{
+  max-width:220px;
+  width:100%;
+  height:auto;
+  display:block;
+}
+.aboutSupportLink{
+  justify-content:center;
+  background:rgba(255,221,0,.10);
+  border-color:rgba(255,221,0,.28);
+}
 .inlineApplyRow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
 .inlineApplyMsg{font-size:12px;opacity:.9;min-height:16px}
 .inlineApplyMsg.ok{color:#9df6b7}
@@ -9997,6 +10032,7 @@ def ui():
           </button>
           <div id="hdrMenuPanel" class="hdrMenuPanel hidden" role="menu" aria-label="Header menu">
             <button id="histBtn" class="hdrMenuItem" role="menuitem" title="History">History</button>
+            <button id="aboutBtn" class="hdrMenuItem" role="menuitem" title="About RelayTV">About</button>
             <button id="settingsBtn" class="hdrMenuItem" role="menuitem" title="Settings">Settings</button>
           </div>
         </div>
@@ -10057,6 +10093,32 @@ def ui():
         <div id="langCurrent" class="hint">Loading audio tracks…</div>
         <div id="langList" class="langList"></div>
         <div id="langMsg" class="helperTxt"></div>
+      </div>
+    </div>
+
+    <div id="aboutBackdrop" class="modalBackdrop hidden" role="dialog" aria-modal="true">
+      <div class="modal">
+        <div class="modalTop">
+          <div class="modalTitle">About RelayTV</div>
+          <div class="modalBtns">
+            <button id="aboutCloseBtn" class="iconBtn sm" title="Close" aria-label="Close">✕</button>
+          </div>
+        </div>
+        <div class="settingsBody">
+          <div class="hint">RelayTV is a local-first TV playback and automation endpoint.</div>
+          <div class="aboutLinks">
+            <a id="aboutGithubLink" class="aboutLink" href="https://github.com/mcgeezy/relaytv" target="_blank" rel="noopener noreferrer">
+              <span>
+                <strong>GitHub Repository</strong>
+                <small>Source code, issues, releases, and documentation.</small>
+              </span>
+              <span aria-hidden="true">↗</span>
+            </a>
+            <a id="aboutSupportLink" class="aboutLink aboutSupportLink" href="https://buymeacoffee.com/relaytv" target="_blank" rel="noopener noreferrer" aria-label="Support RelayTV on Buy Me a Coffee">
+              <img class="aboutSupportImg" src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=%E2%98%95&slug=relaytv&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me a Coffee"/>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -10508,7 +10570,7 @@ function _isHiddenEl(el){
 
 function _uiRefreshInteractionLockActive(){
   if (__draggingQueue) return true;
-  const modalIds = ['addBackdrop', 'histBackdrop', 'settingsBackdrop', 'langBackdrop'];
+  const modalIds = ['addBackdrop', 'histBackdrop', 'aboutBackdrop', 'settingsBackdrop', 'langBackdrop'];
   for (const id of modalIds) {
     const el = document.getElementById(id);
     if (!_isHiddenEl(el)) return true;
@@ -10542,6 +10604,11 @@ function _uiCloseTopLayerFromNav(){
   const settingsBd = document.getElementById('settingsBackdrop');
   if (!_isHiddenEl(settingsBd)) {
     closeSettings({fromNav:true});
+    return true;
+  }
+  const aboutBd = document.getElementById('aboutBackdrop');
+  if (!_isHiddenEl(aboutBd)) {
+    closeAbout({fromNav:true});
     return true;
   }
   const histBd = document.getElementById('histBackdrop');
@@ -13384,6 +13451,39 @@ function bindHistoryUi(){
   });
 }
 
+function openAbout(){
+  closeHeaderMenu();
+  const bd = document.getElementById('aboutBackdrop');
+  if (!bd || !bd.classList.contains('hidden')) return;
+  bd.classList.remove('hidden');
+  _uiPushLayer();
+}
+
+function closeAbout(opts){
+  const bd = document.getElementById('aboutBackdrop');
+  if (!bd) return;
+  const fromNav = !!(opts && opts.fromNav);
+  if (!fromNav && !bd.classList.contains('hidden') && __uiNavDepth > 0) {
+    try { history.back(); } catch (_e) {}
+    return;
+  }
+  bd.classList.add('hidden');
+}
+
+function bindAboutUi(){
+  const btn = document.getElementById('aboutBtn');
+  const closeBtn = document.getElementById('aboutCloseBtn');
+  const bd = document.getElementById('aboutBackdrop');
+  if (btn) btn.onclick = openAbout;
+  if (closeBtn) closeBtn.onclick = closeAbout;
+  if (bd) bd.addEventListener('click', (e) => {
+    if (e.target === bd) closeAbout();
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAbout();
+  });
+}
+
 function closeNowLanguageModal(opts){
   const bd = document.getElementById('langBackdrop');
   if (!bd) return;
@@ -14140,6 +14240,7 @@ window.addEventListener('DOMContentLoaded', () => {
   primeRemoteVolumeSlider().catch(() => {});
   bindHeaderMenu();
   bindHistoryUi();
+  bindAboutUi();
   bindNowLanguageUi();
   bindSettingsUi();
   bindAddUrlUi();
