@@ -4,8 +4,8 @@
 
 This document covers runtime configuration, reconnect behavior, and first-line troubleshooting for the RelayTV Jellyfin receiver integration.
 
-RelayTV now treats the native Jellyfin client as the only supported Jellyfin UX on `main`.
-The old Jellyfin server plugin is deprecated and no longer ships in this branch.
+RelayTV now treats the native Jellyfin client as the only supported Jellyfin UX in the public release.
+The old Jellyfin server plugin is deprecated and no longer ships in the public release.
 
 Discovery:
 
