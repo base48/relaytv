@@ -232,6 +232,12 @@ Planned and in-progress areas include:
 
 ---
 
+## License
+
+RelayTV is licensed under the [GNU General Public License v3.0](LICENSE).
+
+---
+
 ## Support, Star, and Share
 
 If RelayTV is useful to you, please consider:
