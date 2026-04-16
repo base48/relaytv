@@ -572,6 +572,10 @@ def test_idle_page_uses_banner_brand_asset() -> None:
 
     assert response.status_code == 200
     assert '/pwa/brand/banner.png' in response.text
+    assert 'html{font-size:clamp(12px,1.4815vmin,32px)}' in response.text
+    assert '.time{font-size:8rem' in response.text
+    assert 'width:min(100%,70rem)' in response.text
+    assert "root.style.setProperty('--idleQrSizePx', `${size / 16}rem`);" in response.text
 
 
 def test_overlay_playback_visibility_prefers_session_and_transition_signals() -> None:

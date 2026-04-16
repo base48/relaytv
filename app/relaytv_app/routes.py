@@ -1323,28 +1323,29 @@ def _idle_html() -> str:
       --stroke-strong:rgba(205,226,255,.28);
       --accent:#57a3ff;
     }
+    html{font-size:clamp(12px,1.4815vmin,32px)}
     *{box-sizing:border-box;cursor:none!important}
     html,body{margin:0;height:100%;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--txt);cursor:none!important}
     body{
       background:
-        radial-gradient(900px 520px at 18% 82%, rgba(25,75,138,.20), transparent 68%),
-        radial-gradient(1100px 640px at 50% -12%, rgba(145,190,255,.12), transparent 60%),
+        radial-gradient(56.25rem 32.5rem at 18% 82%, rgba(25,75,138,.20), transparent 68%),
+        radial-gradient(68.75rem 40rem at 50% -12%, rgba(145,190,255,.12), transparent 60%),
         linear-gradient(180deg,var(--bg),var(--bg2));
       overflow:hidden;
       cursor:none!important
     }
-    .wrap{height:100%;display:grid;grid-template-rows:auto 1fr auto;gap:18px;padding:26px 30px 26px}
+    .wrap{height:100%;display:grid;grid-template-rows:auto 1fr auto;gap:1.125rem;padding:1.625rem 1.875rem 1.625rem}
     .top{display:flex;justify-content:center;align-items:flex-start;pointer-events:none;width:100%;overflow:visible}
     .heroLogo{
       display:block;
-      width:min(36vw,360px);
-      max-width:calc(100vw - 60px);
+      width:min(36vw,22.5rem);
+      max-width:calc(100vw - 3.75rem);
       height:auto;
       object-fit:contain;
       object-position:center;
-      filter:drop-shadow(0 0 28px rgba(133,191,255,.12));
+      filter:drop-shadow(0 0 1.75rem rgba(133,191,255,.12));
       opacity:.96;
-      margin-top:2px
+      margin-top:.125rem
     }
     .stage{
       min-height:0;
@@ -1353,30 +1354,30 @@ def _idle_html() -> str:
       justify-content:center
     }
     .heroRail{
-      width:min(100%,1120px);
+      width:min(100%,70rem);
       display:grid;
-      gap:26px;
+      gap:1.625rem;
       align-content:center
     }
     .timePanel{
       display:grid;
       grid-template-columns:minmax(0,1fr);
       grid-template-rows:auto auto;
-      column-gap:34px;
-      row-gap:18px;
+      column-gap:2.125rem;
+      row-gap:1.125rem;
       align-items:center;
-      min-height:300px;
-      padding:8px 12px 0;
+      min-height:18.75rem;
+      padding:.5rem .75rem 0;
     }
     .timePanel.hasWeather{
-      grid-template-columns:minmax(0,1fr) minmax(300px,430px);
+      grid-template-columns:minmax(0,1fr) minmax(18.75rem,26.875rem);
     }
     .timeMain{
       display:grid;
       justify-items:end;
       align-content:center;
-      gap:10px;
-      padding-right:12px
+      gap:.625rem;
+      padding-right:.75rem
     }
     .timeDivider{
       display:none
@@ -1384,8 +1385,8 @@ def _idle_html() -> str:
     .weatherHeroPanel{
       display:none;
       align-content:center;
-      gap:8px;
-      padding-left:34px;
+      gap:.5rem;
+      padding-left:2.125rem;
       position:relative
     }
     .timePanel.hasWeather .weatherHeroPanel{
@@ -1400,16 +1401,16 @@ def _idle_html() -> str:
       width:1px;
       background:linear-gradient(180deg, transparent, rgba(235,242,255,.28), transparent)
     }
-    .time{font-size:128px;font-weight:300;font-variant-numeric:tabular-nums;line-height:.88;letter-spacing:-.05em;text-shadow:0 10px 36px rgba(0,0,0,.16)}
-    .date{margin-top:0;color:rgba(230,239,251,.86);font-size:34px;letter-spacing:.01em}
+    .time{font-size:8rem;font-weight:300;font-variant-numeric:tabular-nums;line-height:.88;letter-spacing:-.05em;text-shadow:0 .625rem 2.25rem rgba(0,0,0,.16)}
+    .date{margin-top:0;color:rgba(230,239,251,.86);font-size:2.125rem;letter-spacing:.01em}
     .urls{display:none}
     .pill{
-      padding:10px 16px;
+      padding:.625rem 1rem;
       border-radius:999px;
       background:rgba(255,255,255,.04);
       border:1px solid rgba(205,226,255,.16);
       color:#e8f2ff;
-      font:600 18px/1.2 ui-monospace,Menlo,monospace
+      font:600 1.125rem/1.2 ui-monospace,Menlo,monospace
     }
     .forecastStrip{
       grid-column:1 / -1;
@@ -1429,23 +1430,23 @@ def _idle_html() -> str:
       backdrop-filter:none
     }
     .cardTitle{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(230,241,255,.44)}
-    .cardDesc{margin-top:6px;color:rgba(197,214,235,.66);font-size:13px}
-    .cardValue{margin-top:12px;font-size:24px;font-weight:750}
+    .cardDesc{margin-top:.375rem;color:rgba(197,214,235,.66);font-size:.8125rem}
+    .cardValue{margin-top:.75rem;font-size:1.5rem;font-weight:750}
     .weatherNow{
       margin-top:0;
       position:relative;
       padding-right:0;
       display:grid;
       grid-template-columns:auto 1fr;
-      gap:18px;
+      gap:1.125rem;
       align-items:center
     }
     .weatherHeading{display:block}
-    .weatherHeading .cardDesc{margin-top:4px}
+    .weatherHeading .cardDesc{margin-top:.25rem}
     .weatherCurrent{display:block;margin-top:0}
-    .weatherTemp{font-size:58px;font-weight:400;line-height:.9;letter-spacing:-.04em}
-    .weatherSummary{font-size:24px;color:rgba(230,241,255,.90);margin-top:4px}
-    .weatherMeta{margin-top:10px;display:flex;flex-wrap:wrap;gap:7px 12px;font-size:13px;color:#dce9ff}
+    .weatherTemp{font-size:3.625rem;font-weight:400;line-height:.9;letter-spacing:-.04em}
+    .weatherSummary{font-size:1.5rem;color:rgba(230,241,255,.90);margin-top:.25rem}
+    .weatherMeta{margin-top:.625rem;display:flex;flex-wrap:wrap;gap:.4375rem .75rem;font-size:.8125rem;color:#dce9ff}
     .weatherMeta b{font-weight:760;color:#f3f8ff}
     .wxHero{
       position:relative;
@@ -1455,9 +1456,9 @@ def _idle_html() -> str:
       display:grid;
       justify-items:center;
       align-items:center;
-      width:112px;
-      min-width:112px;
-      height:112px;
+      width:7rem;
+      min-width:7rem;
+      height:7rem;
       padding-top:0;
       border-radius:0;
       border:none;
@@ -1465,14 +1466,14 @@ def _idle_html() -> str:
       overflow:visible
     }
     .wxHero::before{content:none}
-    .wxCode{position:relative;width:112px;height:112px;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,.18))}
+    .wxCode{position:relative;width:7rem;height:7rem;object-fit:contain;filter:drop-shadow(0 .5rem 1rem rgba(0,0,0,.18))}
     .weatherDays{
       margin-top:0;
-      padding-top:18px;
-      padding-bottom:18px;
+      padding-top:1.125rem;
+      padding-bottom:1.125rem;
       position:relative;
       display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(118px,1fr));
+      grid-template-columns:repeat(auto-fit,minmax(7.375rem,1fr));
       gap:0
     }
     .weatherDays::before,
@@ -1490,58 +1491,59 @@ def _idle_html() -> str:
       display:grid;
       justify-items:center;
       align-content:center;
-      gap:8px;
-      min-height:136px;
-      padding:14px 10px 12px;
+      gap:.5rem;
+      min-height:8.5rem;
+      padding:.875rem .625rem .75rem;
       position:relative
     }
     .weatherDay + .weatherDay::before{
       content:"";
       position:absolute;
       left:0;
-      top:18px;
-      bottom:18px;
+      top:1.125rem;
+      bottom:1.125rem;
       width:1px;
       background:linear-gradient(180deg, transparent, rgba(235,242,255,.28), transparent)
     }
-    .weatherDow{font-size:14px;font-weight:700;color:#f0f6ff;text-transform:none;letter-spacing:.01em}
-    .weatherCond{display:grid;justify-items:center;gap:6px;min-width:0}
-    .weatherIcon{width:58px;height:58px;display:block;object-fit:contain}
-    .weatherLabel{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .weatherRange{font-size:18px;color:#f1f6ff;font-weight:500;white-space:nowrap}
+    .weatherDow{font-size:.875rem;font-weight:700;color:#f0f6ff;text-transform:none;letter-spacing:.01em}
+    .weatherCond{display:grid;justify-items:center;gap:.375rem;min-width:0}
+    .weatherIcon{width:3.625rem;height:3.625rem;display:block;object-fit:contain}
+    .weatherLabel{font-size:.8125rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .weatherRange{font-size:1.125rem;color:#f1f6ff;font-weight:500;white-space:nowrap}
     .weatherDatapoint{display:none}
     .footer{
       display:flex;
       justify-content:space-between;
       align-items:end;
-      gap:18px;
-      min-height:54px
+      gap:1.125rem;
+      min-height:3.375rem
     }
     .deviceName{
-      font-size:30px;
+      font-size:1.875rem;
       font-weight:700;
       letter-spacing:.01em;
       color:#edf5ff;
-      text-shadow:0 6px 24px rgba(0,0,0,.25)
+      text-shadow:0 .375rem 1.5rem rgba(0,0,0,.25)
     }
     .statusWrap{
       display:grid;
       justify-items:end;
-      gap:5px
+      gap:.3125rem
     }
     .footerStatus{
       color:rgba(221,233,248,.7);
-      font-size:14px;
+      font-size:.875rem;
       letter-spacing:.14em;
       text-transform:uppercase
     }
     .footerMeta{
       color:rgba(197,214,235,.56);
-      font-size:12px;
+      font-size:.75rem;
       letter-spacing:.08em;
       text-transform:uppercase
     }
     @media (max-width:760px){
+      html{font-size:16px}
       .wrap{padding:18px 18px 20px}
       .stage{align-items:start}
       .heroRail{width:100%;justify-self:stretch}
@@ -1565,23 +1567,23 @@ def _idle_html() -> str:
     }
     .hidden{display:none !important}
     .idleQrWrap{
-      position:fixed;right:18px;bottom:18px;z-index:40;
-      display:flex;flex-direction:column;align-items:center;gap:8px;
-      background:rgba(8,15,27,.84);border:1px solid rgba(116,162,230,.28);border-radius:14px;
-      padding:10px 10px 8px;box-shadow:0 14px 28px rgba(0,0,0,.38);backdrop-filter:blur(6px)
+      position:fixed;right:1.125rem;bottom:1.125rem;z-index:40;
+      display:flex;flex-direction:column;align-items:center;gap:.5rem;
+      background:rgba(8,15,27,.84);border:1px solid rgba(116,162,230,.28);border-radius:.875rem;
+      padding:.625rem .625rem .5rem;box-shadow:0 .875rem 1.75rem rgba(0,0,0,.38);backdrop-filter:blur(.375rem)
     }
     .idleQrImg{
-      width:var(--idleQrSizePx,168px);height:var(--idleQrSizePx,168px);display:block;background:#fff;border-radius:10px;
+      width:var(--idleQrSizePx,10.5rem);height:var(--idleQrSizePx,10.5rem);display:block;background:#fff;border-radius:.625rem;
       border:1px solid rgba(116,162,230,.32)
     }
     .idleQrLabel{
-      max-width:calc(var(--idleQrSizePx,168px) + 4px);color:#d8e8ff;font-size:11px;line-height:1.2;text-align:center;
+      max-width:calc(var(--idleQrSizePx,10.5rem) + .25rem);color:#d8e8ff;font-size:.6875rem;line-height:1.2;text-align:center;
       white-space:nowrap;overflow:hidden;text-overflow:ellipsis
     }
     @media (max-width:760px){
       .idleQrWrap{right:10px;bottom:10px;padding:8px 8px 6px}
-      .idleQrImg{width:var(--idleQrSizeMobilePx,116px);height:var(--idleQrSizeMobilePx,116px)}
-      .idleQrLabel{max-width:calc(var(--idleQrSizeMobilePx,116px) + 2px);font-size:10px}
+      .idleQrImg{width:var(--idleQrSizeMobilePx,7.25rem);height:var(--idleQrSizeMobilePx,7.25rem)}
+      .idleQrLabel{max-width:calc(var(--idleQrSizeMobilePx,7.25rem) + 2px);font-size:10px}
     }
   </style>
 </head>
@@ -1651,8 +1653,8 @@ def _idle_html() -> str:
       const mobile = Math.max(88, Math.min(220, Math.round(size * 0.7)));
       const root = document.documentElement;
       if (root && root.style) {
-        root.style.setProperty('--idleQrSizePx', `${size}px`);
-        root.style.setProperty('--idleQrSizeMobilePx', `${mobile}px`);
+        root.style.setProperty('--idleQrSizePx', `${size / 16}rem`);
+        root.style.setProperty('--idleQrSizeMobilePx', `${mobile / 16}rem`);
       }
     }
     _applyIdleQrSizing(__idleQrSize);
