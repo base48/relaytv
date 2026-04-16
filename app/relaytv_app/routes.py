@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 from fastapi import APIRouter, HTTPException, Request, File, Form, UploadFile
 from fastapi.responses import (
     StreamingResponse,

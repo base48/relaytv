@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 from pathlib import Path
 import shutil
 import subprocess
@@ -164,6 +165,20 @@ def test_release_image_traceability_metadata_is_documented() -> None:
     assert "RELAYTV_IMAGE_REVISION=${{ github.sha }}" in workflow
     assert "RELAYTV_YTDLP_AUTO_UPDATE=0" in release_doc
     assert "GPL-3.0-only" in pyproject
+
+
+def test_first_party_source_files_have_spdx_headers() -> None:
+    checked: list[Path] = []
+    checked.extend((ROOT_DIR / "app/relaytv_app").glob("*.py"))
+    checked.extend((ROOT_DIR / "app/relaytv_app/integrations").glob("*.py"))
+    checked.extend((ROOT_DIR / "tests").glob("*.py"))
+    checked.extend((ROOT_DIR / "scripts").glob("*.sh"))
+    checked.append(ROOT_DIR / "install.sh")
+
+    assert checked
+    for path in checked:
+        head = "\n".join(path.read_text().splitlines()[:3])
+        assert "SPDX-License-Identifier: GPL-3.0-only" in head, str(path)
 
 
 def test_api_docs_include_uploaded_media_endpoints() -> None:

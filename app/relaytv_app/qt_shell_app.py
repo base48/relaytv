@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 """RelayTV Qt shell prototype.
 
 Runs a single Qt process that owns both:
