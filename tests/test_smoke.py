@@ -157,7 +157,7 @@ def test_release_image_traceability_metadata_is_documented() -> None:
     assert 'org.opencontainers.image.source="${RELAYTV_IMAGE_SOURCE}"' in dockerfile
     assert 'org.opencontainers.image.revision="${RELAYTV_IMAGE_REVISION}"' in dockerfile
     assert 'org.opencontainers.image.licenses="GPL-3.0-only"' in dockerfile
-    assert "COPY LICENSE THIRD_PARTY_LICENSES.md ASSETS.md /usr/share/doc/relaytv/" in dockerfile
+    assert "COPY LICENSE COPYING THIRD_PARTY_LICENSES.md ASSETS.md /usr/share/doc/relaytv/" in dockerfile
     assert "context: ." in compose
     assert "dockerfile: app/Dockerfile" in compose
     assert "context: ." in workflow

@@ -109,7 +109,7 @@ RUN set -eux; \
 
 WORKDIR /app
 COPY app/relaytv_app /app/relaytv_app
-COPY LICENSE THIRD_PARTY_LICENSES.md ASSETS.md /usr/share/doc/relaytv/
+COPY LICENSE COPYING THIRD_PARTY_LICENSES.md ASSETS.md /usr/share/doc/relaytv/
 
 # If weather/static assets are staged in relaytv_app/static/weather, copy them into
 # the PWA path so they are served from /pwa/weather/*.

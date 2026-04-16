@@ -70,6 +70,7 @@ The image includes RelayTV license and notice files under:
 
 ```text
 /usr/share/doc/relaytv/LICENSE
+/usr/share/doc/relaytv/COPYING
 /usr/share/doc/relaytv/THIRD_PARTY_LICENSES.md
 /usr/share/doc/relaytv/ASSETS.md
 ```
