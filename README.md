@@ -235,6 +235,7 @@ Planned and in-progress areas include:
 ## License
 
 RelayTV is licensed under the [GNU General Public License v3.0](LICENSE).
+RelayTV artwork and marks are covered by the [asset and trademark policy](ASSETS.md).
 
 ---
 
