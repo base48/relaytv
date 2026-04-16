@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM python:3.13-slim@sha256:d168b8d9eb761f4d3fe305ebd04aeb7e7f2de0297cec5fb2f8f6403244621664
 
 ARG RELAYTV_INSTALL_QT=1
 ARG RELAYTV_INSTALL_X11_OVERLAY=0
@@ -6,6 +6,18 @@ ARG RELAYTV_INSTALL_HEADLESS=0
 ARG RELAYTV_INSTALL_NODE=1
 ARG RELAYTV_INSTALL_IDLE_BROWSER=0
 ARG RELAYTV_INSTALL_OPS_TOOLS=0
+ARG RELAYTV_IMAGE_SOURCE="https://github.com/mcgeezy/relaytv"
+ARG RELAYTV_IMAGE_REVISION="local"
+ARG RELAYTV_IMAGE_VERSION="local"
+ARG RELAYTV_IMAGE_CREATED=""
+
+LABEL org.opencontainers.image.title="RelayTV" \
+      org.opencontainers.image.description="Local-first TV playback and automation endpoint" \
+      org.opencontainers.image.source="${RELAYTV_IMAGE_SOURCE}" \
+      org.opencontainers.image.revision="${RELAYTV_IMAGE_REVISION}" \
+      org.opencontainers.image.version="${RELAYTV_IMAGE_VERSION}" \
+      org.opencontainers.image.created="${RELAYTV_IMAGE_CREATED}" \
+      org.opencontainers.image.licenses="GPL-3.0-only"
 
 RUN set -eux; \
     apt-get update; \
@@ -96,7 +108,8 @@ RUN set -eux; \
     fi
 
 WORKDIR /app
-COPY relaytv_app /app/relaytv_app
+COPY app/relaytv_app /app/relaytv_app
+COPY LICENSE THIRD_PARTY_LICENSES.md ASSETS.md /usr/share/doc/relaytv/
 
 # If weather/static assets are staged in relaytv_app/static/weather, copy them into
 # the PWA path so they are served from /pwa/weather/*.

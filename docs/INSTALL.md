@@ -258,6 +258,11 @@ RELAYTV_YTDLP_AUTO_UPDATE_TIMEOUT_SEC=180
 RELAYTV_YTDLP_AUTO_UPDATE_STATE_FILE=/data/.relaytv-ytdlp-update.json
 ```
 
+Official release images disable `yt-dlp` auto-update by default for source and
+object traceability. Enabling it is a user opt-in that may improve resolver
+freshness, but audited/reproducible build claims only cover the image as built.
+See [RELEASE.md](RELEASE.md) for release input details.
+
 ### CEC
 
 The bootstrap installer prompts to enable HDMI-CEC when likely CEC hardware is

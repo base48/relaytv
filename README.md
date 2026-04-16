@@ -201,6 +201,7 @@ Primary docs:
 - [docs/API.md](docs/API.md)
 - [docs/JELLYFIN_OPERATIONS.md](docs/JELLYFIN_OPERATIONS.md)
 - [docs/NATIVE_RUNTIME_OPERATIONS.md](docs/NATIVE_RUNTIME_OPERATIONS.md)
+- [docs/RELEASE.md](docs/RELEASE.md)
 
 For the doc map, see [docs/README.md](docs/README.md).
 

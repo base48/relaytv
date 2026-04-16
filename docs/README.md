@@ -8,6 +8,7 @@ Use this directory as a small operator/product doc set for the public release br
 - `API.md`: HTTP endpoint reference
 - `JELLYFIN_OPERATIONS.md`: Jellyfin runtime config, verification, troubleshooting
 - `NATIVE_RUNTIME_OPERATIONS.md`: runtime operations, readiness checks, logging, and soak workflow
+- `RELEASE.md`: release inputs, image traceability, and compliance checklist
 
 Development history, migration notes, archived docs, deep validation notes, and engineering-only guidance should stay out of the public documentation tree unless they are intentionally converted into operator-facing docs.
 

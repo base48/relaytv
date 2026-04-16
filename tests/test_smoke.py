@@ -145,6 +145,27 @@ def test_public_image_docs_and_ci_only_offer_latest() -> None:
     assert "suffix=-full" not in text
 
 
+def test_release_image_traceability_metadata_is_documented() -> None:
+    dockerfile = (ROOT_DIR / "app/Dockerfile").read_text()
+    compose = (ROOT_DIR / "docker-compose.yml").read_text()
+    workflow = (ROOT_DIR / ".github/workflows/ci.yml").read_text()
+    release_doc = (ROOT_DIR / "docs/RELEASE.md").read_text()
+    pyproject = (ROOT_DIR / "pyproject.toml").read_text()
+
+    assert "python:3.13-slim@sha256:" in dockerfile
+    assert 'org.opencontainers.image.source="${RELAYTV_IMAGE_SOURCE}"' in dockerfile
+    assert 'org.opencontainers.image.revision="${RELAYTV_IMAGE_REVISION}"' in dockerfile
+    assert 'org.opencontainers.image.licenses="GPL-3.0-only"' in dockerfile
+    assert "COPY LICENSE THIRD_PARTY_LICENSES.md ASSETS.md /usr/share/doc/relaytv/" in dockerfile
+    assert "context: ." in compose
+    assert "dockerfile: app/Dockerfile" in compose
+    assert "context: ." in workflow
+    assert "file: ./app/Dockerfile" in workflow
+    assert "RELAYTV_IMAGE_REVISION=${{ github.sha }}" in workflow
+    assert "RELAYTV_YTDLP_AUTO_UPDATE=0" in release_doc
+    assert "GPL-3.0-only" in pyproject
+
+
 def test_api_docs_include_uploaded_media_endpoints() -> None:
     text = (ROOT_DIR / "docs/API.md").read_text()
 

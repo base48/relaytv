@@ -44,10 +44,15 @@ jobs:
       - name: Build and optionally publish Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./app
+          context: .
+          file: ./app/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
           load: false
           tags: ghcr.io/${{ github.repository }}:latest
+          build-args: |
+            RELAYTV_IMAGE_SOURCE=https://github.com/${{ github.repository }}
+            RELAYTV_IMAGE_REVISION=${{ github.sha }}
+            RELAYTV_IMAGE_VERSION=${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
