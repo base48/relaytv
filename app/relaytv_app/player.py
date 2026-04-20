@@ -57,6 +57,19 @@ CEC_AUTO_ON_SWITCH_ENV = os.getenv("RELAYTV_CEC_AUTO_ON_SWITCH", "").strip()  # 
 _CEC_MONITOR_THREAD: threading.Thread | None = None
 _CEC_MONITOR_STOP = threading.Event()
 _CEC_LAST_STANDBY = 0.0
+_CEC_CONTROLLER_PROC: subprocess.Popen | None = None
+_CEC_CONTROLLER_LOCK = threading.Lock()
+_CEC_CONTROLLER_WRITE_LOCK = threading.Lock()
+_CEC_CONTROLLER_STATUS: dict[str, Any] = {
+    "running": False,
+    "pid": None,
+    "last_error": "",
+    "last_command": "",
+    "last_command_ok": None,
+    "last_command_ts": 0.0,
+    "last_event": "",
+    "last_event_ts": 0.0,
+}
 
 CEC_OPCODE_STANDBY = "36"
 CEC_OPCODE_ROUTING_CHANGE = "80"
@@ -132,9 +145,66 @@ def cec_available() -> bool:
         return False
 
 
-def cec_send(cmds: str) -> None:
-    """Send commands to cec-client stdin. Example cmds: "on 0\nas\n"""
+def _update_cec_controller_status(**patch) -> None:
+    with _CEC_CONTROLLER_LOCK:
+        _CEC_CONTROLLER_STATUS.update(patch)
 
+
+def cec_controller_status() -> dict[str, Any]:
+    with _CEC_CONTROLLER_LOCK:
+        status = dict(_CEC_CONTROLLER_STATUS)
+        proc = _CEC_CONTROLLER_PROC
+    if proc is not None:
+        status["running"] = proc.poll() is None
+        status["pid"] = proc.pid
+    return status
+
+
+def _cec_controller_running() -> bool:
+    with _CEC_CONTROLLER_LOCK:
+        proc = _CEC_CONTROLLER_PROC
+    return proc is not None and proc.poll() is None and proc.stdin is not None
+
+
+def _wait_for_cec_controller(timeout_sec: float = 2.0) -> bool:
+    deadline = time.time() + max(0.0, float(timeout_sec))
+    while time.time() < deadline:
+        if _cec_controller_running():
+            return True
+        time.sleep(0.05)
+    return _cec_controller_running()
+
+
+def _cec_send_via_controller(cmds: str) -> bool:
+    with _CEC_CONTROLLER_LOCK:
+        proc = _CEC_CONTROLLER_PROC
+    if proc is None or proc.poll() is not None or proc.stdin is None:
+        return False
+
+    normalized = cmds if cmds.endswith("\n") else f"{cmds}\n"
+    with _CEC_CONTROLLER_WRITE_LOCK:
+        try:
+            proc.stdin.write(normalized)
+            proc.stdin.flush()
+            _update_cec_controller_status(
+                last_command=cmds.strip(),
+                last_command_ok=True,
+                last_command_ts=time.time(),
+                last_error="",
+            )
+            return True
+        except Exception as exc:
+            _update_cec_controller_status(
+                last_command=cmds.strip(),
+                last_command_ok=False,
+                last_command_ts=time.time(),
+                last_error=str(exc),
+            )
+            logger.warning("cec_controller_send_failed error=%s", exc)
+            return False
+
+
+def _cec_send_one_shot(cmds: str) -> None:
     try:
         p = subprocess.run(
             ["cec-client", "-s", "-d", "1"],
@@ -142,6 +212,11 @@ def cec_send(cmds: str) -> None:
             text=True,
             capture_output=True,
             timeout=6,
+        )
+        _update_cec_controller_status(
+            last_command=cmds.strip(),
+            last_command_ok=(p.returncode == 0),
+            last_command_ts=time.time(),
         )
         # Some adapters return non-zero even if it worked; be tolerant but log.
         if p.returncode != 0:
@@ -152,8 +227,22 @@ def cec_send(cmds: str) -> None:
                 logger.warning("cec_send_stdout %s", (p.stdout or "").strip())
     except FileNotFoundError:
         logger.info("cec_unavailable cec-client_not_installed")
+        _update_cec_controller_status(last_command=cmds.strip(), last_command_ok=False, last_command_ts=time.time(), last_error="cec-client_not_installed")
     except Exception as e:
         logger.warning("cec_send_failed error=%s", e)
+        _update_cec_controller_status(last_command=cmds.strip(), last_command_ok=False, last_command_ts=time.time(), last_error=str(e))
+
+
+def cec_send(cmds: str) -> None:
+    """Send commands to cec-client stdin. Example cmds: "on 0\nas\n"""
+
+    if cec_monitor_enabled():
+        if not _cec_controller_running():
+            start_cec_monitor()
+            _wait_for_cec_controller()
+        if _cec_send_via_controller(cmds):
+            return
+    _cec_send_one_shot(cmds)
 
 
 def tv_on_and_switch() -> None:
@@ -219,12 +308,15 @@ def _pause_for_tv_standby() -> None:
 
 
 def _cec_monitor_loop() -> None:
-    """Read cec-client output and react to standby."""
-    # cec-client prints to stdout; -d 1 keeps it readable
+    """Own cec-client for both event monitoring and command writes."""
     cmd = ["cec-client", "-d", "1"]
-    logger.info("cec_monitor_start cmd=%s", " ".join(cmd))
+    logger.info("cec_controller_start cmd=%s", " ".join(cmd))
     try:
-        with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as proc:
+        with subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1) as proc:
+            global _CEC_CONTROLLER_PROC
+            with _CEC_CONTROLLER_LOCK:
+                _CEC_CONTROLLER_PROC = proc
+                _CEC_CONTROLLER_STATUS.update({"running": True, "pid": proc.pid, "last_error": ""})
             while not _CEC_MONITOR_STOP.is_set():
                 line = proc.stdout.readline() if proc.stdout else ""
                 if not line:
@@ -237,6 +329,7 @@ def _cec_monitor_loop() -> None:
                 parsed = _parse_cec_traffic(line)
                 if parsed:
                     opcode, operands = parsed
+                    _update_cec_controller_status(last_event=opcode, last_event_ts=time.time())
                     if opcode == CEC_OPCODE_STANDBY:
                         _pause_for_tv_standby()
                         continue
@@ -286,6 +379,7 @@ def _cec_monitor_loop() -> None:
 
                 low = line.strip().lower()
                 if "standby" in low and ("broadcast" in low or "received" in low or "traffic" in low):
+                    _update_cec_controller_status(last_event="standby_text", last_event_ts=time.time())
                     _pause_for_tv_standby()
 
             try:
@@ -293,10 +387,17 @@ def _cec_monitor_loop() -> None:
             except Exception:
                 pass
     except FileNotFoundError:
-        logger.info("cec_monitor_unavailable cec-client_not_installed")
+        logger.info("cec_controller_unavailable cec-client_not_installed")
+        _update_cec_controller_status(running=False, pid=None, last_error="cec-client_not_installed")
     except Exception as e:
-        logger.warning("cec_monitor_crashed error=%s", e)
-    logger.info("cec_monitor_stopped")
+        logger.warning("cec_controller_crashed error=%s", e)
+        _update_cec_controller_status(running=False, pid=None, last_error=str(e))
+    finally:
+        with _CEC_CONTROLLER_LOCK:
+            if _CEC_CONTROLLER_PROC is not None and _CEC_CONTROLLER_PROC.poll() is not None:
+                _CEC_CONTROLLER_PROC = None
+            _CEC_CONTROLLER_STATUS.update({"running": False, "pid": None})
+    logger.info("cec_controller_stopped")
 
 
 def start_cec_monitor() -> None:

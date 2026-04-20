@@ -142,6 +142,61 @@ def test_repo_installer_generates_host_device_override_for_cec() -> None:
     assert "/dev/cec*" in text
 
 
+def test_cec_send_uses_running_controller(monkeypatch: pytest.MonkeyPatch) -> None:
+    writes: list[str] = []
+
+    class FakeStdin:
+        def write(self, value: str) -> None:
+            writes.append(value)
+
+        def flush(self) -> None:
+            writes.append("<flush>")
+
+    class FakeProc:
+        pid = 1234
+        stdin = FakeStdin()
+
+        def poll(self):
+            return None
+
+    def fail_run(*args, **kwargs):
+        raise AssertionError("one-shot cec-client should not run when controller is alive")
+
+    monkeypatch.setattr(player, "CEC_MONITOR_ENV", "1")
+    monkeypatch.setattr(player, "_CEC_CONTROLLER_PROC", FakeProc())
+    monkeypatch.setattr(player.subprocess, "run", fail_run)
+
+    player.cec_send("on 0\nas\n")
+
+    assert writes == ["on 0\nas\n", "<flush>"]
+    status = player.cec_controller_status()
+    assert status["last_command"] == "on 0\nas"
+    assert status["last_command_ok"] is True
+
+
+def test_cec_send_falls_back_to_one_shot_without_controller(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[dict[str, object]] = []
+
+    class Result:
+        returncode = 0
+        stdout = ""
+        stderr = ""
+
+    def fake_run(args, **kwargs):
+        calls.append({"args": args, **kwargs})
+        return Result()
+
+    monkeypatch.setattr(player, "CEC_MONITOR_ENV", "0")
+    monkeypatch.setattr(player, "_CEC_CONTROLLER_PROC", None)
+    monkeypatch.setattr(player.subprocess, "run", fake_run)
+
+    player.cec_send("pow 0\n")
+
+    assert calls
+    assert calls[0]["args"] == ["cec-client", "-s", "-d", "1"]
+    assert calls[0]["input"] == "pow 0\n"
+
+
 def test_public_image_docs_and_ci_only_offer_latest() -> None:
     text = "\n".join(
         [
