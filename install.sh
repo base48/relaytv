@@ -212,11 +212,16 @@ detect_cec_devices() {
     [ -e "$dev" ] || continue
     printf "%s\n" "$dev"
   done
+  if command -v cec-client >/dev/null 2>&1; then
+    cec-client -l 2>/dev/null \
+      | grep -Eo '/dev/(cec[0-9]+|ttyACM[0-9]+)' \
+      || true
+  fi
 }
 
 cec_detected_summary() {
   local nodes
-  nodes="$(detect_cec_devices | paste -sd, - 2>/dev/null || true)"
+  nodes="$(detect_cec_devices | sort -u | paste -sd, - 2>/dev/null || true)"
   if [ -n "$nodes" ]; then
     printf "%s" "$nodes"
     return 0

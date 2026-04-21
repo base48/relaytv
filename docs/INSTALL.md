@@ -266,8 +266,10 @@ See [RELEASE.md](RELEASE.md) for release input details.
 ### CEC
 
 The bootstrap installer prompts to enable HDMI-CEC when likely CEC hardware is
-detected. If enabled, `scripts/install.sh` writes the detected `/dev/cec*`
-devices into `docker-compose.override.yml`.
+detected. If enabled, `scripts/install.sh` writes the detected CEC device nodes
+into `docker-compose.override.yml`. Linux CEC adapters exposed as `/dev/cec*`
+are included directly. USB libCEC adapters are included only when `cec-client -l`
+reports an allowlisted device path such as `/dev/ttyACM*`.
 
 Manual override:
 
@@ -280,6 +282,7 @@ Equivalent compose passthrough:
 ```yaml
 devices:
   - /dev/cec0:/dev/cec0
+  - /dev/ttyACM0:/dev/ttyACM0
 ```
 
 ### X11 Overlay

@@ -144,6 +144,11 @@ def test_repo_installer_generates_host_device_override_for_cec() -> None:
     assert "detect_cec_device_nodes" in text
     assert "host-device-overrides" in text
     assert "/dev/cec*" in text
+    assert "cec-client -l" in text
+    assert "/dev/(cec[0-9]+|ttyACM[0-9]+)" in text
+    assert "detect_cec_device_group_ids" in text
+    assert "group_add:" in text
+    assert "sort -u" in text
 
 
 def test_cec_send_uses_running_controller(monkeypatch: pytest.MonkeyPatch) -> None:
