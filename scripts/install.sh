@@ -1027,16 +1027,6 @@ if [ "$(id -u)" -eq 0 ]; then
   chown "${PUID}:${PGID}" .env 2>/dev/null || true
 fi
 
-TURNUP_HINT=""
-SOAK_HINT=""
-if [ "$MODE" = "wayland" ]; then
-  TURNUP_HINT="./scripts/host-ops.sh up --wayland-native --native-playback"
-  SOAK_HINT="./scripts/host-ops.sh soak --native-qt --preset 30m --no-up"
-elif [ "$MODE" = "x11" ]; then
-  TURNUP_HINT="./scripts/host-ops.sh up --x11-native --native-playback"
-  SOAK_HINT="./scripts/host-ops.sh soak --native-qt --preset 30m --no-up"
-fi
-
 say "RelayTV installer (minimal)"
 say "  Autodetect mode: $( [ "$CLEAN_AUTODETECT" = "1" ] && printf '%s' clean || printf '%s' shell-env )"
 say "  Install mode request: ${INSTALL_MODE}"
@@ -1092,19 +1082,3 @@ if [ "$CEC_NODES_MISSING" = "1" ]; then
   say "  WARN: RELAYTV_CEC_ENABLED=1 but no CEC device node was found."
 fi
 say "  MPV_AUDIO_DEVICE: ${AUDIO_DEVICE_VAL:-<auto>}"
-say ""
-say "Next:"
-say "  docker compose pull"
-say "  docker compose up -d"
-if [ -f "$ROOT/docker-compose.yml" ] && grep -q '^[[:space:]]*build:' "$ROOT/docker-compose.yml"; then
-  say "  docker compose up -d --build"
-fi
-if [ -n "$TURNUP_HINT" ]; then
-  say "  ${TURNUP_HINT}"
-fi
-if [ -n "$SOAK_HINT" ]; then
-  say "  ${SOAK_HINT}"
-fi
-if [ "$MODE" = "wayland" ] || [ "$MODE" = "x11" ]; then
-  say "  ./scripts/host-ops.sh native-ready"
-fi

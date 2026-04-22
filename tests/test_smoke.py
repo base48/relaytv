@@ -151,6 +151,15 @@ def test_repo_installer_generates_host_device_override_for_cec() -> None:
     assert "sort -u" in text
 
 
+def test_repo_installer_does_not_print_runtime_test_next_steps() -> None:
+    text = (ROOT_DIR / "scripts/install.sh").read_text()
+
+    assert 'say "Next:"' not in text
+    assert "host-ops.sh up --" not in text
+    assert "host-ops.sh soak" not in text
+    assert "host-ops.sh native-ready" not in text
+
+
 def test_cec_send_uses_running_controller(monkeypatch: pytest.MonkeyPatch) -> None:
     writes: list[str] = []
 
