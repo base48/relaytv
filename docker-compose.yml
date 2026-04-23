@@ -1,7 +1,7 @@
 services:
   relaytv:
     user: "${PUID:-1000}:${PGID:-1000}"
-    image: "${RELAYTV_IMAGE_REF:-ghcr.io/mcgeezy/relaytv:latest}"
+    image: "${RELAYTV_IMAGE_REF:-ghcr.io/base48/relaytv:latest}"
     pull_policy: "${RELAYTV_PULL_POLICY:-missing}"
     build:
       context: .
@@ -13,7 +13,7 @@ services:
         RELAYTV_INSTALL_NODE: ${RELAYTV_INSTALL_NODE:-1}
         RELAYTV_INSTALL_IDLE_BROWSER: ${RELAYTV_INSTALL_IDLE_BROWSER:-0}
         RELAYTV_INSTALL_OPS_TOOLS: ${RELAYTV_INSTALL_OPS_TOOLS:-0}
-        RELAYTV_IMAGE_SOURCE: ${RELAYTV_IMAGE_SOURCE:-https://github.com/mcgeezy/relaytv}
+        RELAYTV_IMAGE_SOURCE: ${RELAYTV_IMAGE_SOURCE:-https://github.com/base48/relaytv}
         RELAYTV_IMAGE_REVISION: ${RELAYTV_IMAGE_REVISION:-local}
         RELAYTV_IMAGE_VERSION: ${RELAYTV_IMAGE_VERSION:-local}
         RELAYTV_IMAGE_CREATED: ${RELAYTV_IMAGE_CREATED:-}
