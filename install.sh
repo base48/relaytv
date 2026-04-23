@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-only
 set -euo pipefail
 
-DEFAULT_REPO="mcgeezy/relaytv"
+DEFAULT_REPO="base48/relaytv"
 DEFAULT_BRANCH="main"
-DEFAULT_IMAGE="ghcr.io/mcgeezy/relaytv:latest"
+DEFAULT_IMAGE="ghcr.io/base48/relaytv:latest"
 
 say() { printf "%s\n" "$*"; }
 die() {
